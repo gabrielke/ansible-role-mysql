@@ -1,0 +1,24 @@
+---
+
+- name: Install yum-utils
+  yum:
+    name: yum-utils
+    state: present
+
+- name: Copy repo definition rpm file to server
+  copy:
+     src: mysql57-community-release-el7-11.noarch.rpm
+     dest: /root/mysql57-community-release-el7-11.noarch.rpm
+
+- name: Install repo definition
+  yum:
+    name: /root/mysql57-community-release-el7-11.noarch.rpm
+    state: present
+      
+- name: Ensure MySQL packages are installed.
+  yum: "name={{ item }} state=installed enablerepo={{ mysql_enablerepo }}"
+  with_items: "{{ mysql_packages }}"
+  register: ce_mysql_install_packages
+
+- name: Ensure MySQL Python libraries are installed.
+  yum: "name=MySQL-python state=installed enablerepo={{ mysql_enablerepo }}"
